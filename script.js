@@ -30,20 +30,77 @@ const marseillaisHistoires = [
     "Une fois, un joueur a célébré un but avec un salto arrière… et a fini dans les bras d’un supporter. Depuis, ils sont amis et se retrouvent à chaque match."
 ];
 
-const generateParagraph = (usedStories) => {
+// Fragments pour générer des histoires variées
+const personnages = [
+    "Papin", "Drogba", "Thauvin", "Payet", "Gignac", "Barthez", "Tapie", "un minot", "un supporter", "le boulanger du coin", "Zidane", "Mandanda", "Labrune"
+];
+const lieux = [
+    "le Vélodrome", "la Canebière", "le Vieux-Port", "le bar des Trois Dauphins", "le marché de Noailles", "la plage du Prado", "Castellane", "le port", "le stade d'entraînement"
+];
+const actions = [
+    "a marqué un but incroyable", "a lancé une sardine sur le terrain", "a chanté 'Aux Armes !' à s'en casser la voix", "a raté un penalty", "a fait une galéjade", "a défié ses coéquipiers au tir au but", "a jonglé avec des oranges", "a célébré avec un salto arrière", "a crié 'À la Zidane !' avant de trébucher"
+];
+const objets = [
+    "une boîte de sardines", "une écharpe de l’OM", "une bouillabaisse", "un ballon", "une baguette OM", "un tifo géant", "un maillot collector", "une télé miniature"
+];
+const expressions = [
+    "Oh Bonne Mère !", "Dis-moi pas qu'c'est pas vrai !", "Eh béh !", "C’est Marseille bébé !", "T’imagines ?", "Incroyable mais vrai !", "C’est la légende !"
+];
+
+// Templates d’histoires
+const templates = [
+    "{expression} {personnage} au {lieu} {action}.",
+    "Un jour, {personnage} a échangé {objet} au {lieu}. {expression}",
+    "Pendant un match au {lieu}, {personnage} {action} avec {objet}.",
+    "{expression} Au {lieu}, {personnage} a surpris tout le monde en {action}.",
+    "On raconte qu’au {lieu}, {personnage} a crié : '{expression}' après avoir {action}.",
+    "{personnage} a offert {objet} à un supporter au {lieu}. {expression}"
+];
+
+// Générateur d’une histoire unique
+function genererHistoireAleatoire(usedCombos) {
+    let histoire = "";
+    let combo = "";
+    let essais = 0;
+    do {
+        const template = templates[Math.floor(Math.random() * templates.length)];
+        const personnage = personnages[Math.floor(Math.random() * personnages.length)];
+        const lieu = lieux[Math.floor(Math.random() * lieux.length)];
+        const action = actions[Math.floor(Math.random() * actions.length)];
+        const objet = objets[Math.floor(Math.random() * objets.length)];
+        const expression = expressions[Math.floor(Math.random() * expressions.length)];
+
+        histoire = template
+            .replace("{personnage}", personnage)
+            .replace("{lieu}", lieu)
+            .replace("{action}", action)
+            .replace("{objet}", objet)
+            .replace("{expression}", expression);
+
+        combo = `${template}|${personnage}|${lieu}|${action}|${objet}|${expression}`;
+        essais++;
+    } while (usedCombos.has(combo) && essais < 10);
+
+    usedCombos.add(combo);
+    return histoire;
+}
+
+// Nouvelle version du générateur de paragraphe
+const generateParagraph = (usedStories, usedCombos) => {
     const paragraph = [];
-    const sentenceCount = Math.min(
-        Math.floor(Math.random() * 3) + 2, // 2 à 4 phrases par paragraphe
-        marseillaisHistoires.length - usedStories.size
-    );
+    const sentenceCount = Math.floor(Math.random() * 3) + 2; // 2 à 4 phrases
 
     while (paragraph.length < sentenceCount) {
-        const randomIndex = Math.floor(Math.random() * marseillaisHistoires.length);
-        const sentence = marseillaisHistoires[randomIndex];
-
-        if (!usedStories.has(sentence)) {
-            paragraph.push(sentence);
-            usedStories.add(sentence); // Marque cette phrase comme utilisée
+        // 50% de chance de prendre une histoire fixe ou générée
+        if (Math.random() < 0.5 && usedStories.size < marseillaisHistoires.length) {
+            const randomIndex = Math.floor(Math.random() * marseillaisHistoires.length);
+            const sentence = marseillaisHistoires[randomIndex];
+            if (!usedStories.has(sentence)) {
+                paragraph.push(sentence);
+                usedStories.add(sentence);
+            }
+        } else {
+            paragraph.push(genererHistoireAleatoire(usedCombos));
         }
     }
 
@@ -52,11 +109,11 @@ const generateParagraph = (usedStories) => {
 
 const generateLoremIpsum = (count) => {
     const usedStories = new Set();
+    const usedCombos = new Set();
     const loremIpsum = [];
 
     for (let i = 0; i < count; i++) {
-        if (usedStories.size >= marseillaisHistoires.length) break; // Stop si toutes les phrases ont été utilisées
-        loremIpsum.push(generateParagraph(usedStories));
+        loremIpsum.push(generateParagraph(usedStories, usedCombos));
     }
 
     return loremIpsum.join("\n\n");
