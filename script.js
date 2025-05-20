@@ -60,7 +60,7 @@ const lieux = [
 ];
 
 const actions = [
-    // existantes
+    // existants
     "a marqué un but incroyable", "a lancé une sardine sur le terrain", "a chanté 'Aux Armes !' à s'en casser la voix", "a raté un penalty", "a fait une galéjade", "a défié ses coéquipiers au tir au but", "a jonglé avec des oranges", "a célébré avec un salto arrière", "a crié 'À la Zidane !' avant de trébucher",
     "a glissé une enveloppe sous la table", "a négocié un transfert douteux", "a distribué des billets", "a discuté avec la mafia", "a organisé un dîner secret", "a promis une prime en cash", "a disparu juste avant le match", "a glissé sur une peau de banane", "a fait une blague Carambar", "a lancé des confettis sur l’arbitre", "a chanté faux l’hymne", "a fait un selfie avec une sardine", "a tenté un dab raté", "a fait une ola tout seul",
     // nouveaux
